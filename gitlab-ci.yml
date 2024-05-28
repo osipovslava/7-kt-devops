@@ -1,0 +1,32 @@
+stages:
+  - build
+  - test
+  - deploy
+
+# Stage build
+build:
+  stage: build
+  script:
+    - docker build -t my-app .
+    - docker tag my-app registry.gitlab.com/<your-namespace>/<your-repo>/my-app:latest
+    - docker push registry.gitlab.com/<your-namespace>/<your-repo>/my-app:latest
+  only:
+    - main
+
+# Stage test
+test:
+  stage: test
+  script:
+    - echo "Run tests here"  # Здесь вы можете разместить команды для запуска тестов
+  only:
+    - main
+
+# Stage deploy
+deploy:
+  stage: deploy
+  script:
+    - docker pull registry.gitlab.com/<your-namespace>/<your-repo>/my-app:latest
+    - docker run -d -p 80:5000 my-app
+  only:
+    - main
+
